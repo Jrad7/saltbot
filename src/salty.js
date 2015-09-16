@@ -70,7 +70,8 @@ var Controller = function() {
 	this.bettorsC2 = [];
 	this.settings = null;
 	this.lastMatchCumulativeBetTotal = null;
-
+	var mode = "Monk";
+	var statusset = false;
 	var self = this;
 
 	var debugMode = true;
@@ -81,17 +82,26 @@ var Controller = function() {
 
 		self.ticksSinceMatchBegan += 1;
 
+		var status = document.getElementById('betstatus');
+		var modestr = " Mode: ";
+
 		//check to see if the betting buttons are visible
 		var bettingTable = document.getElementsByClassName("dynamic-view")[0];
 		var styleObj = window.getComputedStyle(bettingTable, null);
 		var active = styleObj.display != "none";
-		if (!active)
+		if (!active) {
 			bettingAvailable = false;
+			if(!statusset) {
+				status.innerHTML = status.innerHTML.concat(modestr.concat(mode));
+				statusset = true;
+			}
 
+		}
 		if (active && bettingComplete == true) {
 			bettingAvailable = true;
 			bettingEntered = false;
 			bettingComplete = false;
+			statusset = false;
 		}
 
 		if (bettingAvailable && !bettingEntered) {
@@ -218,6 +228,7 @@ var Controller = function() {
 			//set up next strategy
 			if (matchesProcessed == 0 && self.bestChromosome==null) {
 				//always observe the first match in the cycle, due to chrome alarm mandatory timing delay
+				mode = "Monk";
 				self.currentMatch = new Match(new Observer());
 			}
 			else if (self.settings.limit_enabled && self.currentMatch && self.currentMatch.getBalance() >= self.settings.limit) {
@@ -240,18 +251,23 @@ var Controller = function() {
 				switch(self.settings.nextStrategy) {
 				case "o":
 					self.currentMatch = new Match(new Observer());
+					mode = "Monk";
 					break;
 				case "rc":
 					self.currentMatch = new Match(new RatioConfidence());
+					mode = "Scientist";
 					break;
 				case "cs":
 					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal));
+					mode = "Cowboy";
 					break;
 				case "ipu":
-					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));
+					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));p
+					mode = "Lunatic";
 					break;
 				default:
 					self.currentMatch = new Match(new Observer());
+					mode = "Monk";
 					break;
 				}
 				//set aggro:
@@ -263,6 +279,7 @@ var Controller = function() {
 				}
 
 			}
+			status.innerHTML = status.innerHTML.concat(modestr.concat(mode));
 
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {
