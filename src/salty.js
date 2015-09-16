@@ -262,7 +262,7 @@ var Controller = function() {
 					mode = "Cowboy";
 					break;
 				case "ipu":
-					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));p
+					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));
 					mode = "Lunatic";
 					break;
 				default:
