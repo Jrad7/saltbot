@@ -80,9 +80,11 @@ var Controller = function() {
 	var botWindow = window.open("", "Salty Bot","width=400,height=300,toolbar=no,menubar=no");
 	var botDoc = botWindow.document;
 	var botModeDiv = document.createElement('div');
+	var botMatchesDiv = document.createElement('div');
 	var botStatsDiv = document.createElement('div');
 	var botCashDiv = document.createElement('div');
 	botDoc.body.appendChild(botModeDiv);
+	botDoc.body.appendChild(botMatchesDiv);
 	botDoc.body.appendChild(botStatsDiv);
 	botDoc.body.appendChild(botCashDiv);
 
@@ -157,6 +159,8 @@ var Controller = function() {
 							matches_v1 = [];
 							matches_v1.push(mr);
 						}
+
+						botMatchesDiv.innerHTML = "Total Matches: " + matches_v1.length + "<br>";
 
 						//character records:
 						if (results.hasOwnProperty("characters_v1"))
