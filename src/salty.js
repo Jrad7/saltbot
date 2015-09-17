@@ -88,6 +88,8 @@ var Controller = function() {
 	botDoc.body.appendChild(botStatsDiv);
 	botDoc.body.appendChild(botCashDiv);
 
+	var win = new UI(); 
+
 	setInterval(function() {
 		if (!self.settings)
 			return;
