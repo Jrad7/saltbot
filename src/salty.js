@@ -71,19 +71,26 @@ var Controller = function() {
 	this.settings = null;
 	this.lastMatchCumulativeBetTotal = null;
 	var mode = "Monk";
+	var modestr = " Mode: ";
 	var statusset = false;
 	var self = this;
-
+	var totalRunning = 0;
+	var initalCash = 0;
 	var debugMode = true;
+	var botWindow = window.open("", "Salty Bot","width=400,height=300,toolbar=no,menubar=no");
+	var botDoc = botWindow.document;
+	var botModeDiv = document.createElement('div');
+	var botStatsDiv = document.createElement('div');
+	var botCashDiv = document.createElement('div');
+	botDoc.body.appendChild(botModeDiv);
+	botDoc.body.appendChild(botStatsDiv);
+	botDoc.body.appendChild(botCashDiv);
 
 	setInterval(function() {
 		if (!self.settings)
 			return;
 
 		self.ticksSinceMatchBegan += 1;
-
-		var status = document.getElementById('betstatus');
-		var modestr = " Mode: ";
 
 		//check to see if the betting buttons are visible
 		var bettingTable = document.getElementsByClassName("dynamic-view")[0];
@@ -92,7 +99,7 @@ var Controller = function() {
 		if (!active) {
 			bettingAvailable = false;
 			if(!statusset) {
-				status.innerHTML = status.innerHTML.concat(modestr.concat(mode));
+				botModeDiv.innerHTML = modestr.concat(mode);
 				statusset = true;
 			}
 
@@ -255,11 +262,11 @@ var Controller = function() {
 					break;
 				case "rc":
 					self.currentMatch = new Match(new RatioConfidence());
-					mode = "Scientist";
+					mode = "Cowboy";
 					break;
 				case "cs":
-					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal));
-					mode = "Cowboy";
+					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal, botStatsDiv));
+					mode = "Scientist";
 					break;
 				case "ipu":
 					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));
@@ -279,7 +286,18 @@ var Controller = function() {
 				}
 
 			}
-			status.innerHTML = status.innerHTML.concat(modestr.concat(mode));
+			botModeDiv.innerHTML = modestr.concat(mode);
+			if(matchesProcessed == 0) {
+					initalCash =  self.currentMatch.getBalance();
+					botCashDiv.innerHTML = "Running Total: 0";
+
+			}
+			else {
+				var balance = self.currentMatch.getBalance();
+				var totalRunning = balance - initalCash;
+
+				botCashDiv.innerHTML = "Running Total: " + totalRunning + "<br>";
+			}
 
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {

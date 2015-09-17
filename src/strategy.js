@@ -8,13 +8,9 @@ var Strategy = function(sn) {
 	this.strategyName = sn;
 	this.prediction = null;
 	this.debug = true;
-	this.levels = [[0, 1000, 0],
-				   [1000, 10000, 1],
-				   [10000, 100000, 10],
-				   [100000, 500000, 25],
-				   [500000, 1000000, 100],
-				   [1000000, 5000000, 250],
-				   [5000000, 20000000, 300]];
+
+	this.levels = [[0, 1000, 0], [1000, 10000, 1], [10000, 100000, 10], [100000, 500000, 25], [500000, 1000000, 100], [1000000, 5000000, 250]];
+
 };
 Strategy.prototype.getBailout = function(tournament){
 	var nameSpan = document.getElementsByTagName("h2")[0].children[2];
@@ -356,7 +352,7 @@ var CSStats = function(cObj, chromosome) {
 		this.ifPercent = ifSum / cObj.illumFavor.length;
 	}
 };
-var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal) {
+var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal, statsDiv) {
 	Strategy.call(this, "cs");
 	this.abstain = false;
 	this.confidence = null;
@@ -364,6 +360,7 @@ var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal) {
 	this.chromosome = chromosome;
 	this.level = level;
 	this.lastMatchCumulativeBetTotal = lastMatchCumulativeBetTotal;
+	this.statsDiv = statsDiv;
 };
 ConfidenceScore.prototype = Object.create(Strategy.prototype);
 ConfidenceScore.prototype.__super__ = Strategy;
@@ -419,10 +416,12 @@ ConfidenceScore.prototype.execute = function(info) {
 	var wpTotal = c1Stats.wins+c2Stats.wins;
 	var c1WPDisplay = wpTotal>0?c1Stats.wins/wpTotal:0;
 	var c2WPDisplay = wpTotal>0?c2Stats.wins/wpTotal:0;
+
 	if (this.debug) winsMessage = "\xBB WINS/LOSSES:     weighted totals as % (red:blue) -> ("+(c1WPDisplay*100).toFixed(0)+" : "+(c2WPDisplay*100).toFixed(0)+")"+
 				  "  ::  unweighted (red W:L)(blue W:L) -> ("+ c1.wins.length + ":" + c1.losses.length + ")(" + c2.wins.length + ":" + c2.losses.length+")"+
 				  "  ::  details (red W:L)(blue W:L) -> (" + c1.wins.toString().replace(/,/g, '') + ":" + c1.losses.toString().replace(/,/g, '') + ")" +
 				                                  "(" + c2.wins.toString().replace(/,/g, '') + ":" + c2.losses.toString().replace(/,/g, '') + ")";
+	var wlstr = c1.name + "-Red: W" + c1.wins.length + "/L" + c1.losses.length + "<br>" + c2.name + "-Blue: W" + c2.wins.length + "/L" + c2.losses.length + "<br>";
 
 	if (c1WP > c2WP)
 		c1Score += winPercentageWeight;
@@ -521,6 +520,15 @@ ConfidenceScore.prototype.execute = function(info) {
 			console.log(nerfMsg + "\n--> dropping confidence by " + (nerfAmount * 100).toFixed(0) + "%");
 		this.confidence *= 1 - nerfAmount;
 	}
+	var scorestr = c1.name + ":" + c1Score.toFixed(2) + " || " + c2.name + ":" + c2Score.toFixed(2) + "<br>";
+	var winstr = "Predicted Winner: " + this.prediction + "<br>";
+	var conf = this.confidence * 100;
+	var confstr = "Confidence: " + conf.toFixed(2) + "<br>";
+	var divstr = wlstr;
+	divstr += scorestr;
+	divstr += winstr;
+	divstr += confstr;
+	this.statsDiv.innerHTML = divstr;
 
 	// make sure something gets bet
 	if (this.confidence < 0)
