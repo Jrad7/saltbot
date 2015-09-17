@@ -287,18 +287,17 @@ var Controller = function() {
 
 			}
 			botModeDiv.innerHTML = modestr.concat(mode);
-			if(matchesProcessed == 0) {
+			if(self.infoFromWaifu.mode != 't') {
+				if(initalCash == 0) {
 					initalCash =  self.currentMatch.getBalance();
 					botCashDiv.innerHTML = "Running Total: 0";
-
+				}
+				else {
+						var balance = self.currentMatch.getBalance();
+						var totalRunning = balance - initalCash;
+						botCashDiv.innerHTML = "Running Total: " + totalRunning + "<br>";
+				}
 			}
-			else {
-				var balance = self.currentMatch.getBalance();
-				var totalRunning = balance - initalCash;
-
-				botCashDiv.innerHTML = "Running Total: " + totalRunning + "<br>";
-			}
-
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {
 				self.currentMatch = null;
