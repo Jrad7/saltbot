@@ -5,14 +5,14 @@
 	"description": "This extension automates betting on SaltyBet.com.",
 	"version": "2.1.8",
 	"permissions": ["storage", "unlimitedStorage", "declarativeContent", "tabs", "alarms"],
-	"web_accessible_resources": [ "lib/images/*" ],
+	"web_accessible_resources": [ "lib/images/*.png" ],
 	"content_scripts": [
 		{
 			"matches": ["http://*.saltybet.com/", "https://*.saltybet.com/"],
 			"css": ["lib/jquery-ui.css", "lib/jquery-ui.theme.css", "lib/jquery-ui.structure.css"],
 			"js": ["lib/jquery-2.1.4.js", "lib/jquery-ui.js", "ui.js", "lib/FileSaver.min.js", "records.js", "tracker.js", "strategy.js", "salty.js", "lib/jquery.min.js", "lib/date.js"]
 		},
-		{
+		{ 
 			"matches": ["http://www.twitch.tv/saltybet/chat", "https://www.twitch.tv/saltybet/chat"],
 			"js": ["lib/jquery.min.js", "twitch_content.js"]
 		}
