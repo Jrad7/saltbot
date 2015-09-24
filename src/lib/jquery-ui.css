@@ -388,11 +388,11 @@ button.ui-button::-moz-focus-inner {
 	border-left-width: 1px;
 }
 .ui-dialog {
-	overflow: hidden;
+	overflow: hidden !important;
 	position: absolute;
 	top: 0;
 	left: 0;
-	padding: .2em;
+	padding: 0 !important;
 	outline: 0;
 }
 .ui-dialog .ui-dialog-titlebar {
@@ -404,7 +404,7 @@ button.ui-button::-moz-focus-inner {
 	margin: .1em 0;
 	white-space: nowrap;
 	width: 90%;
-	overflow: hidden;
+	overflow: hidden !important;
 	text-overflow: ellipsis;
 }
 .ui-dialog .ui-dialog-titlebar-close {
@@ -419,9 +419,9 @@ button.ui-button::-moz-focus-inner {
 .ui-dialog .ui-dialog-content {
 	position: relative;
 	border: 0;
-	padding: .5em 1em;
+	padding: 0 !important;
 	background: none;
-	overflow: auto;
+	overflow: hidden !important;
 }
 .ui-dialog .ui-dialog-buttonpane {
 	text-align: left;
@@ -777,6 +777,8 @@ button.ui-button::-moz-focus-inner {
 .ui-tabs {
 	position: relative;/* position: relative prevents IE scroll bug (element with position: relative inside container with overflow: auto appear as "fixed") */
 	padding: .2em;
+	height: 100%;
+	width: 100%;
 }
 .ui-tabs .ui-tabs-nav {
 	margin: 0;

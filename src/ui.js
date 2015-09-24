@@ -1,7 +1,11 @@
 var UI = function() {
 
-	this.$window = $('<div>foobarbaz</div>')
-               .html('<iframe style="border: 0px; " src="" width="100%" height="100%"></iframe>')
+	if ( arguments.callee._singletonInstance )
+		return arguments.callee._singletonInstance;
+	arguments.callee._singletonInstance = this;
+
+	this.$window = $('<div id="popup"></div>')
+			   .html('<iframe id="frame" style="border: 0px; overflow: hidden; " src="" width="100%" height="100%"></iframe>')
                .dialog({
                    autoOpen: false,
                    modal: false,
@@ -9,7 +13,60 @@ var UI = function() {
                    width: 400,
                    title: "Salt Bot UI"
                });
+	var $head = $("#frame").contents().find("head");
+	var $link = chrome.extension.getURL('lib/jquery-ui.css');
+	$head.append($("<link/>",
+    { rel: "stylesheet", href: $link, type: "text/css" }));
+	$link = chrome.extension.getURL('lib/jquery-ui.theme.css');
+	$head.append($("<link/>",
+    { rel: "stylesheet", href: $link, type: "text/css" }));
+
 	this.$window.dialog('open');
- 
+
+	this.Tabs = document.createElement('div');
+	this.Tabs.id = 'tabs';
+	this.Tabs.innerHTML = "<ul><li><a href=\"#matchTab\">Current Match</a></li><li><a href=\"#statsTab\">Stats</a></li></ul>";
+
+	this.matchTab = this.createAndAppendDiv('matchTab', this.Tabs);
+	this.statsTab = this.createAndAppendDiv('statsTab', this.Tabs);
+
+	this.modeDiv = this.createAndAppendDiv('modeDiv', this.matchTab);
+	this.totalMatchesDiv = this.createAndAppendDiv('totalMatchesDiv', this.matchTab);
+
+	$('#frame').contents().find('body').append(this.Tabs);
+	$( this.Tabs ).tabs();
 };
 
+UI.prototype.setMode = function(mode) {
+	this.mode = mode;
+	this.modeDiv.innerHTML = this.modeStr() + this.mode;
+};
+
+UI.prototype.getMode = function() {
+	return this.mode;
+};
+
+UI.prototype.modeStr = function() {
+	return "Current Mode: ";
+};
+
+UI.prototype.getTotalMatches = function(){
+	chrome.storage.local.get(["matches_v1"], function (data) {
+		return data.matches_v1.length;
+	});
+};
+
+UI.prototype.updateTotalMatches = function() {
+	this.totalMatchesDiv.innerHTML = this.totalMatchesStr() + this.getTotalMatches();
+};
+
+UI.prototype.totalMatchesStr = function() {
+	return "Total Matches: ";
+};
+
+UI.prototype.createAndAppendDiv = function(div, parent) {
+	var newDiv = document.createElement('div');
+	newDiv.id = div;
+	parent.appendChild(newDiv);
+	return newDiv;
+};

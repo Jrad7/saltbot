@@ -5,7 +5,7 @@
 	"description": "This extension automates betting on SaltyBet.com.",
 	"version": "2.1.8",
 	"permissions": ["storage", "unlimitedStorage", "declarativeContent", "tabs", "alarms"],
-	"web_accessible_resources": [ "lib/images/*.png" ],
+	"web_accessible_resources": [ "lib/images/*.png", "lib/*.css" ],
 	"content_scripts": [
 		{
 			"matches": ["http://*.saltybet.com/", "https://*.saltybet.com/"],

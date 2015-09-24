@@ -1,3 +1,5 @@
+var win = new UI();
+
 var Settings = function() {
 	this.nextStrategy = null;
 	this.video = true;
@@ -70,8 +72,6 @@ var Controller = function() {
 	this.bettorsC2 = [];
 	this.settings = null;
 	this.lastMatchCumulativeBetTotal = null;
-	var mode = "Monk";
-	var modestr = " Mode: ";
 	var statusset = false;
 	var self = this;
 	var totalRunning = 0;
@@ -88,7 +88,8 @@ var Controller = function() {
 	botDoc.body.appendChild(botStatsDiv);
 	botDoc.body.appendChild(botCashDiv);
 
-	var win = new UI(); 
+	win.setMode('Starting up...');
+	win.updateTotalMatches();
 
 	setInterval(function() {
 		if (!self.settings)
@@ -103,7 +104,7 @@ var Controller = function() {
 		if (!active) {
 			bettingAvailable = false;
 			if(!statusset) {
-				botModeDiv.innerHTML = modestr.concat(mode);
+				win.setMode(win.getMode());
 				statusset = true;
 			}
 
@@ -162,7 +163,7 @@ var Controller = function() {
 							matches_v1.push(mr);
 						}
 
-						botMatchesDiv.innerHTML = "Total Matches: " + matches_v1.length + "<br>";
+						botMatchesDiv.innerHTML = "Total Matches: " + results.matches_v1.length + "<br>";
 
 						//character records:
 						if (results.hasOwnProperty("characters_v1"))
@@ -235,13 +236,14 @@ var Controller = function() {
 					console.log("- failed to determine winner, matches this cycle: " + matchesProcessed);
 					if (matchesProcessed >= matchesBeforeReset)
 						location.reload();
-				}				
+				}
+				win.updateTotalMatches();
+				matchesProcessed += 1;
 			}
 			
 			//set up next strategy
 			if (matchesProcessed == 0 && self.bestChromosome==null) {
 				//always observe the first match in the cycle, due to chrome alarm mandatory timing delay
-				mode = "Monk";
 				self.currentMatch = new Match(new Observer());
 			}
 			else if (self.settings.limit_enabled && self.currentMatch && self.currentMatch.getBalance() >= self.settings.limit) {
@@ -264,23 +266,23 @@ var Controller = function() {
 				switch(self.settings.nextStrategy) {
 				case "o":
 					self.currentMatch = new Match(new Observer());
-					mode = "Monk";
+					win.setMode('Monk');
 					break;
 				case "rc":
 					self.currentMatch = new Match(new RatioConfidence());
-					mode = "Cowboy";
+					win.setMode('Cowboy');
 					break;
 				case "cs":
 					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal, botStatsDiv));
-					mode = "Scientist";
+					win.setMode('Scientist');
 					break;
 				case "ipu":
 					self.currentMatch = new Match(new InternetPotentialUpset(new ChromosomeIPU(), level));
-					mode = "Lunatic";
+					win.setMode('Lunatic');
 					break;
 				default:
 					self.currentMatch = new Match(new Observer());
-					mode = "Monk";
+					win.setMode(win.getMode());
 					break;
 				}
 				//set aggro:
@@ -292,7 +294,6 @@ var Controller = function() {
 				}
 
 			}
-			botModeDiv.innerHTML = modestr.concat(mode);
 			if(self.infoFromWaifu.mode != 't') {
 				if(initalCash == 0) {
 					initalCash =  self.currentMatch.getBalance();
@@ -400,6 +401,7 @@ Controller.prototype.changeStrategy = function(sn, data) {
 		t="Lunatic";
 		break;
 	}
+	win.setMode(t);
 	console.log("- changing strategy to " + t);
 	this.saveSettings("- settings saved");
 };
