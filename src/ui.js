@@ -31,7 +31,7 @@ var UI = function() {
 	this.statsTab = this.createAndAppendDiv('statsTab', this.Tabs);
 
 	this.modeDiv = this.createAndAppendDiv('modeDiv', this.matchTab);
-	this.totalMatchesDiv = this.createAndAppendDiv('totalMatchesDiv', this.matchTab);
+	this.totalMatchesDiv = this.createAndAppendDiv('totalMatchesDiv', this.statsTab);
 
 	$('#frame').contents().find('body').append(this.Tabs);
 	$( this.Tabs ).tabs();
@@ -50,14 +50,15 @@ UI.prototype.modeStr = function() {
 	return "Current Mode: ";
 };
 
-UI.prototype.getTotalMatches = function(){
-	chrome.storage.local.get(["matches_v1"], function (data) {
-		return data.matches_v1.length;
+UI.prototype.updateTotalMatches = function() {
+	chrome.storage.local.get(["matches_v1"], function(results){
+		var win = new UI();
+		win.setTotalMatches(results.matches_v1.length);
 	});
 };
 
-UI.prototype.updateTotalMatches = function() {
-	this.totalMatchesDiv.innerHTML = this.totalMatchesStr() + this.getTotalMatches();
+UI.prototype.setTotalMatches = function(matches) {
+	this.totalMatchesDiv.innerHTML = this.totalMatchesStr() + matches;
 };
 
 UI.prototype.totalMatchesStr = function() {
