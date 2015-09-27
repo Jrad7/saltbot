@@ -74,6 +74,7 @@ var Controller = function() {
 	this.lastMatchCumulativeBetTotal = null;
 	var statusset = false;
 	var initalCash = 0;
+	var debugMode = 1;
 	var self = this;
 
 	win.setMode('Starting up...');
@@ -291,6 +292,7 @@ var Controller = function() {
 					win.setRunningTotal(totalRunning);
 				}
 			}
+			win.updateTotalMatches();
 			win.updateRunningTotalDiv();
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {
