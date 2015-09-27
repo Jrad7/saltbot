@@ -37,7 +37,7 @@ Strategy.prototype.getBailout = function(tournament){
 			return 100 + level*25;
 };
 Strategy.prototype.flatBet = function(balance, debug) {
-	var flatAmount = 100;
+	var flatAmount = 250;
 	var multiplierIndex = 2;
 	var intendedBet = flatAmount * this.levels[this.level][multiplierIndex] * this.confidence;
 	if (debug)
@@ -45,7 +45,7 @@ Strategy.prototype.flatBet = function(balance, debug) {
 	if (this.level == 0)
 		return balance;
 	else
-		return Math.ceil(intendedBet);
+		return (Math.ceil(intendedBet/1000)*1000);
 };
 Strategy.prototype.adjustLevel = function(balance) {
 	if (!this.level)

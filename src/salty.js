@@ -294,6 +294,13 @@ var Controller = function() {
 			}
 			win.updateTotalMatches();
 			win.updateRunningTotalDiv();
+
+			// just remove the commas, I'm sure this creates problems elsewhere, but at least the match gets processed
+			if (self.currentMatch.names[0].indexOf(",") > -1 || self.currentMatch.names[1].indexOf(",") > -1) {
+				self.currentMatch.names[0].replace(',','');
+				self.currentMatch.names[1].replace(',','');
+			}
+
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {
 				self.currentMatch = null;
