@@ -352,7 +352,7 @@ var CSStats = function(cObj, chromosome) {
 		this.ifPercent = ifSum / cObj.illumFavor.length;
 	}
 };
-var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal, statsDiv) {
+var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal) {
 	Strategy.call(this, "cs");
 	this.abstain = false;
 	this.confidence = null;
@@ -360,7 +360,6 @@ var ConfidenceScore = function(chromosome, level, lastMatchCumulativeBetTotal, s
 	this.chromosome = chromosome;
 	this.level = level;
 	this.lastMatchCumulativeBetTotal = lastMatchCumulativeBetTotal;
-	this.statsDiv = statsDiv;
 };
 ConfidenceScore.prototype = Object.create(Strategy.prototype);
 ConfidenceScore.prototype.__super__ = Strategy;
@@ -520,15 +519,11 @@ ConfidenceScore.prototype.execute = function(info) {
 			console.log(nerfMsg + "\n--> dropping confidence by " + (nerfAmount * 100).toFixed(0) + "%");
 		this.confidence *= 1 - nerfAmount;
 	}
-	var scorestr = c1.name + ":" + c1Score.toFixed(2) + " || " + c2.name + ":" + c2Score.toFixed(2) + "<br>";
-	var winstr = "Predicted Winner: " + this.prediction + "<br>";
-	var conf = this.confidence * 100;
-	var confstr = "Confidence: " + conf.toFixed(2) + "<br>";
-	var divstr = wlstr;
-	divstr += scorestr;
-	divstr += winstr;
-	divstr += confstr;
-	this.statsDiv.innerHTML = divstr;
+
+	var win = new UI();
+	win.setP1Score((c1Score * 100).toFixed(0));
+	win.setP2Score((c2Score * 100).toFixed(0));
+	win.setConf((this.confidence * 100).toFixed(0));
 
 	// make sure something gets bet
 	if (this.confidence < 0)

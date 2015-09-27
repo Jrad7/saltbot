@@ -73,20 +73,8 @@ var Controller = function() {
 	this.settings = null;
 	this.lastMatchCumulativeBetTotal = null;
 	var statusset = false;
-	var self = this;
-	var totalRunning = 0;
 	var initalCash = 0;
-	var debugMode = true;
-	var botWindow = window.open("", "Salty Bot","width=400,height=300,toolbar=no,menubar=no");
-	var botDoc = botWindow.document;
-	var botModeDiv = document.createElement('div');
-	var botMatchesDiv = document.createElement('div');
-	var botStatsDiv = document.createElement('div');
-	var botCashDiv = document.createElement('div');
-	botDoc.body.appendChild(botModeDiv);
-	botDoc.body.appendChild(botMatchesDiv);
-	botDoc.body.appendChild(botStatsDiv);
-	botDoc.body.appendChild(botCashDiv);
+	var self = this;
 
 	win.setMode('Starting up...');
 	win.updateTotalMatches();
@@ -162,8 +150,6 @@ var Controller = function() {
 							matches_v1 = [];
 							matches_v1.push(mr);
 						}
-
-						botMatchesDiv.innerHTML = "Total Matches: " + results.matches_v1.length + "<br>";
 
 						//character records:
 						if (results.hasOwnProperty("characters_v1"))
@@ -273,7 +259,7 @@ var Controller = function() {
 					win.setMode('Cowboy');
 					break;
 				case "cs":
-					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal, botStatsDiv));
+					self.currentMatch = new Match(new ConfidenceScore(self.bestChromosome, level, self.lastMatchCumulativeBetTotal));
 					win.setMode('Scientist');
 					break;
 				case "ipu":
@@ -296,15 +282,16 @@ var Controller = function() {
 			}
 			if(self.infoFromWaifu.mode != 't') {
 				if(initalCash == 0) {
-					initalCash =  self.currentMatch.getBalance();
-					botCashDiv.innerHTML = "Running Total: 0";
+					win.setRunningTotal(0);
+					initalCash = self.currentMatch.getBalance();
 				}
 				else {
-						var balance = self.currentMatch.getBalance();
-						var totalRunning = balance - initalCash;
-						botCashDiv.innerHTML = "Running Total: " + totalRunning + "<br>";
+					var balance = self.currentMatch.getBalance();
+					var totalRunning = balance - initalCash;
+					win.setRunningTotal(totalRunning);
 				}
 			}
+			win.updateRunningTotalDiv();
 			//skip team matches, mirror matches
 			if (self.currentMatch.names[0].toLowerCase().indexOf("team") > -1 || self.currentMatch.names[1].toLowerCase().indexOf("team") > -1) {
 				self.currentMatch = null;

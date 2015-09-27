@@ -102,7 +102,7 @@ Match.prototype.init = function() {
 		var self = s;
 		var baseSeconds = 2000;
 		var recs = result.characters_v1;
-
+		var win = new UI();
 		//self.fillCharacters(result);//get character record objects or make new ones
 		if (recs)
 			for (var i = 0; i < recs.length; i++) {
@@ -119,11 +119,20 @@ Match.prototype.init = function() {
 		self.character1 = (self.character1 == null) ? new Character(self.names[0]) : self.character1;
 		self.character2 = (self.character2 == null) ? new Character(self.names[1]) : self.character2;
 
+		win.setP1(self.character1.name);
+		win.setP2(self.character2.name);
+		win.setP1WL(self.character1.wins.length, self.character1.losses.length);
+		win.setP2WL(self.character2.wins.length, self.character2.losses.length);
+
 		var prediction = self.strategy.execute({
 			"character1" : self.character1,
 			"character2" : self.character2,
 			"matches" : result.matches_v1
 		});
+
+		win.updateP1Div();
+		win.updateP2Div();
+		win.setWinner(prediction);
 
 		if (prediction != null || self.strategy.lowBet) {
 			setTimeout(function() {
