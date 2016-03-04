@@ -59,7 +59,9 @@ Match.prototype.getRecords = function(w) {//in the event of a draw, pass in the 
 			"if" : this.illumFavor,
 			"dt" : new Date().toString("dd-MM-yyyy")
 		};
-
+		var db = new DB();
+		db.addMatch(mr);
+		
 		updater.updateCharactersFromMatch(mr, this.character1, this.character2);
 		return [mr, this.character1, this.character2];
 	} else {
